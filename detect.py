@@ -7,11 +7,14 @@ import numpy as np
 # load a pretrained model (recommended for training)
 model = YOLO("widerface.pt")
 # res = model("./images/test.jpg")
+# plot = res[0].plot()
+# cv2.imshow("test.jpg", plot)
+# cv2.waitKey(0)
 
 def detect(img):
     img = np.array(img)
     # Use the model
-    res = model(img)  # predict on an image
+    res = model.predict(img, conf=0.5)  # predict on an image
     plot = res[0].plot()
     boxes = res[0].boxes.cpu().numpy().boxes.tolist()
 
