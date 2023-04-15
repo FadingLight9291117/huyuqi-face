@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 
 @app.route('/detect', methods=['POST'])
-def detect():
+def detectApi():
     if 'image' not in request.files:
         return jsonify({'error': 'No image found in request'}), 400
 
@@ -34,7 +34,7 @@ def detect():
         return jsonify({'error': 'Allowed image types are png, jpg, jpeg, gif'}), 400
 
 @app.route('/repair', methods=['POST'])
-def repair():
+def repairApi():
     if 'image' not in request.files:
         return jsonify({'error': 'No image found in request'}), 400
 
