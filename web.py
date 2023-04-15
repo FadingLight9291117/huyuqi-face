@@ -3,6 +3,7 @@ import os
 import cv2
 from flask import Flask, request, jsonify
 from detect import detect
+from repair import repair
 import numpy as np
 
 app = Flask(__name__)
@@ -50,11 +51,10 @@ def repairApi():
 
         img = np.frombuffer(file.stream.read(), np.uint8)
         img = cv2.imdecode(img, cv2.IMREAD_COLOR)
-
-        boxes, plot = detect(img)
-        retval, buffer = cv2.imencode('.png', plot)
+        restored_img = repair(img)
+        retval, buffer = cv2.imencode('.png', restored_img)
         jpg_as_text = base64.b64encode(buffer).decode('utf-8')
-        return jsonify({'boxes': boxes, 'image': jpg_as_text}), 200
+        return jsonify({'boxes': [], 'image': jpg_as_text}), 200
     else:
         return jsonify({'error': 'Allowed image types are png, jpg, jpeg, gif'}), 400
 

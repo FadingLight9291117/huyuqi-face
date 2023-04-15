@@ -3,9 +3,15 @@ import os
 from pathlib import Path
 import cv2
 import matplotlib.pyplot as plt
+import numpy as np
+
+restorer = None
+restorer_version = ""
 
 def repair(img, version="1.4", arch='clean', channel_multiplier=2, upscale=2, bg_upsampler=None):
-
+    global restorer
+    global restorer_version
+    img = np.array(img)
     # ------------------------ set up GFPGAN restorer ------------------------
     if version == '1':
         arch = 'original'
@@ -40,13 +46,15 @@ def repair(img, version="1.4", arch='clean', channel_multiplier=2, upscale=2, bg
         # download pre-trained models from url
         model_path = url
     
-    restorer = GFPGANer(
-        model_path=model_path,
-        upscale=upscale,
-        arch=arch,
-        channel_multiplier=channel_multiplier,
-        bg_upsampler=bg_upsampler)
-    
+    if restorer_version != version:
+        restorer_version = version
+        restorer = GFPGANer(
+            model_path=model_path,
+            upscale=upscale,
+            arch=arch,
+            channel_multiplier=channel_multiplier,
+            bg_upsampler=bg_upsampler)
+        
     cropped_faces, restored_faces, restored_img = restorer.enhance(
         img,
         has_aligned=False,
@@ -54,12 +62,13 @@ def repair(img, version="1.4", arch='clean', channel_multiplier=2, upscale=2, bg
         paste_back=True,
         weight=0.5)
 
-    return cropped_faces, restored_faces, restored_img
+    return restored_img
     
 if __name__ == '__main__':
     img_path = './images/ycy.png'
     input_img = cv2.imread(img_path, cv2.IMREAD_COLOR)
-    cropped_faces, restored_faces, restored_img = repair(input_img)
+    restored_img = repair(input_img)
     print(f'Processing {Path(img_path).name} ...')
-    cv2.imshow('y', restored_img)
-    cv2.waitKey(0)
+    # cv2.imshow('y', restored_img)
+    # cv2.waitKey(0)
+    print(type(restored_img))
