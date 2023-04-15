@@ -5,7 +5,7 @@ import numpy as np
 
 # Load a model
 # load a pretrained model (recommended for training)
-model = YOLO("widerface.pt")
+model = YOLO("./ultralytics/weights/widerface.pt")
 # res = model("./images/test.jpg")
 # plot = res[0].plot()
 # cv2.imshow("test.jpg", plot)
